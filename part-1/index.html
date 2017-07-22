@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+  <title>Better Analytics With APIs Part 1: How the internet works</title>
+  <link href='../big.css' rel='stylesheet' type='text/css' />
+  <link href='../highlight.min.css' rel='stylesheet' type='text/css' />
+  <style>
+    .new-shiny { background: #aaaaaa; }
+    body.inline-image { display: inline; position: center;}
+  </style>
+  <script src='../big.js'></script>
+  <script src='../highlight.js'></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+  <div>Better Analytics With APIs Part 1: <strong>How the internet works</strong></div>
+  <div><em>#sdx-wtf-internet-apis</em></div>
+  <div>Welcome! My name is <a href='http://lyzidiamond.com/'>Lyzi</a>, I work on APIs, and I like teaching.</div>
+  <div data-bodyclass='inline-image'><em>Goal of this workshop:</em> You feel sparkley. <br><br><img src='../img/corgidoorstop.gif'></div>
+  <div><strong>Credit where credit is due.</strong><notes>This information comes from a series of amazing blog posts, presentations, and books. Full links on the last slide.</notes></div>
+  <div>We're going to start with a scenario:</div>
+  <div data-background-image='https://image.shutterstock.com/z/stock-photo-funny-and-crazy-man-using-a-computer-on-gray-background-human-hands-hug-monitor-concept-of-love-283174037.jpg'><em>Hassan checks his Facebook.</em><notes>I don't know anyone named Hassan, but this is a good example for talking through the process of what happens when you use the internet.</notes></div>
+  <div>Three main pieces to discuss:<ul><li>Request</li><li>Response</li><li>Parsing the response</li></ul></div>
+  <div>Hassan's computer <em>requests</em> a web site, the server sends back a <em>response</em>, and then Hassan's browser needs to <em>parse</em> the response and do something with it.</div>
+  <div data-background-image='https://wallpaperscraft.com/image/hands_request_emotion_7927_1600x1200.jpg'><strong>Part I: Requests</strong></div>
+  <div data-bodyclass='inline-image'>1. Hassan types <em>facebook.com</em> into the browser and presses Enter.<br><img src='../img/facebookcom.png'></div>
+  <div>From Hassan's perspective, what's the next thing that happens?<notes>the page loads. but really, what's going on behind the scenes?</notes></div>
+  <div>1a. The browser adds a few things to the URL:<br><br><pre><em>https://</em>facebook.com<em>/</em></pre></div>
+  <div><pre><em>https://</em>facebook.com<em>/</em></pre><br><br><ul><li><pre>https://</pre> &mdash; protocol</li><li><pre>facebook.com</pre> &mdash; domain</li><li><pre>/</pre> &mdash; <strong>resource</strong></li></ul></div>
+  <div data-bodyclass='fact'>You can go really deep here.<notes>each of these steps can be broken down into many many sub-steps</notes></div>
+  <div>1b. The browser looks up the domain in <strong>DNS</strong> &mdash; Domain Name System</div>
+  <div data-bodyclass='fact inline-image'>PSA: Computers are dumb.<br><br><img src='../img/r2.gif'></div>
+  <div>Computers need rules to communicate with each other. In internet land, these are <em>protocols</em>.<notes>hint: if an acronym has a "p" in it, it probably stands for protocol.</notes></div>
+  <div><strong>DNS</strong> takes the human-readable URL and converts it to an <em>IP (Internet Protocol) address</em>.</div>
+  <div data-bodyclass='inline-image'>Every machine connected to the web has an IP address, including yours!<br><br> <img src='../img/myip.png'></div>
+  <div>Importantly: so does <strong>facebook.com</strong>. DNS tells the browser what IP address is associated with that URL.</div>
+  <div>1c. The browser + your computer generate an <em>HTTP request</em>. (What does <strong>HTTP</strong> stand for?)</div>
+  <div>A <em>request</em> contains a few different pieces:<ul><li>method</li><li>resource</li><li>headers</li><li>body (optional)</li></ul></div>
+  <div>Main types of request <strong>methods</strong>:<ul><li><pre>GET</pre> &mdash; requesting to read a resource from the server</li><li><pre>POST</pre> &mdash; requesting to post a resource to the server</li><li><pre>PATCH</pre> &mdash; requesting to update or edit a resource on the server</li><li><pre>DELETE</pre> &mdash; requesting to delete a resource on the server</li></ul></div>
+  <div data-background-image='https://image.shutterstock.com/z/stock-photo-funny-and-crazy-man-using-a-computer-on-gray-background-human-hands-hug-monitor-concept-of-love-283174037.jpg'><em>Back to Hassan. What type of request did his browser make?</em></div>
+  <div>The <strong>resource</strong> is what we're requesting. In this case, we are requesting <pre>/</pre>, which is the same as <pre>index.html</pre> -- the main page.</div>
+  <div>The server needs the name of the resource to <em>route</em> the request to the right spot (more on this in a sec).</div>
+  <div>The <strong>headers</strong> give the server additional information to fulfill the request. Common headers include:<ul><li><pre>Accept</pre> &mdash; the types of responses the browser will accept in response to the request</li><li><pre>Referer</pre> &mdash; the referring site (if referred)</li><li><pre>User-Agent</pre> &mdash; the type of application that made the request</li></ul></div>
+  <div>There are a <em>ton</em> of HTTP headers.</div>
+  <div>The <strong>request body</strong> is not used in a <pre>GET</pre> request, but is used when posting or updating resources on a server.</div>
+  <div>1d. Once the <strong>request</strong> is completed, it gets sent by Hassan's computer to the correct server (as identified by <em>IP address</em> with the help of <em>DNS</em>).</div>
+  <div data-background-image='../img/internetprocess.jpeg'><notes>in this moment, Hassan's computer becomes a client</notes></div>
+  <div><strong>Part II: Responses</strong></div>
+  <div data-bodyclass='facts'>You may have noticed we're still on step 1.<notes>Hassan isn't seeing any of this happening, so to him, this is all part of typing in the URL and pressing enter. That's why we're on step 1.</notes></div>
+  <div>1e. The server receives the request and breaks it down to get the info it needs:<ul><li>request method</li><li>domain</li><li>requested path/page/resource</li></ul></div>
+  <div>1f. The server verfies a bunch of info: does a <em>host</em> for the requested domain exist on that server? If so, can it accept the request type? Is the client (Hassan's computer) allowed to make that kind of request?</div>
+  <div> In our case Hassan is requesting a public web page. Unless DNS did something really wrong, he should be good.</div>
+  <div data-bodyclass='inline-image'>1g. Once verfied, the server may change info about the request for internal purposes. #serverstuff<br><br><img src='http://images.parents.mdpcdn.com/sites/parents.com/files/styles/width_360/public/images/550_102255761.jpg'></div>
+  <div data-bodyclass='inline-image'>1h. Server finds the requested resource!<br><br><img src='../img/partyparrot.gif'></div>
+  <div>1g. Server constructs a <strong>response</strong> to send back to Hassan's computer.</div>
+  <div>Like <strong>requests</strong>, <strong>responses</strong> also contain a few well-defined pieces.</div>
+  <div data-bodyclass='facts'>Remember when I said computers are dumb?<notes>worth bringing up again -- everything computers do is well defined and specific.</notes></div>
+  <div>A <strong>response</strong> contains a few different pieces:<ul><li>status code</li><li>headers</li><li>body (optional)</li></ul></div>
+  <div><em>Look familiar? ;)</em></div>
+  <div>IMPORTANT: <a href='https://httpstatusdogs.com'>HTTP Status Dogs</a></div>
+  <div data-background-image='https://httpstatusdogs.com/img/200.jpg'></div>
+  <div data-background-image='https://httpstatusdogs.com/img/304.jpg'></div>
+  <div data-background-image='https://httpstatusdogs.com/img/404.jpg'></div>
+  <div data-background-image='https://httpstatusdogs.com/img/429.jpg'></div>
+  <div data-background-image='https://httpstatusdogs.com/img/503.jpg'></div>
+  <div>Overview:<ul><li>100 &mdash; server tells the client to continue and send the request body</li><li>200 &mdash; everything is good</li><li>300 &mdash; server has to or has redirected the request</li><li>400 &mdash; the client did something wrong</li><li>500 &mdash; the server did something wrong</li></ul></div>
+  <div>The <strong>headers</strong> are similar to request headers -- they give info about the response and any instructions for the client.</div>
+  <div>Common headers include:<ul><li><pre>Cache-Control</pre> &mdash; how long the client is allowed to cache the resource</li><li><pre>Content-Type</pre> &mdash; the type of content in the returned resource</li><li><pre>Last-Modified</pre> &mdash; the last time the resource was modified</li></ul>
+  <div>There are a <em>ton</em> of HTTP headers.</div>
+  <div>The <strong>body</strong> contains the requested resource (<em>payload</em>). In Hassan's case, this resource is the HTML page that makes up <em>facebook.com</em>.</div>
+  <div><strong>Part III: Parsing the response</strong></div>
+  <div data-background-image='https://image.shutterstock.com/z/stock-photo-funny-and-crazy-man-using-a-computer-on-gray-background-human-hands-hug-monitor-concept-of-love-283174037.jpg'>Don't worry, we haven't forgotten Hassan.</div>
+  <div>1h. Once the browser <strong>receives</strong> the response, it reads the HTML page and starts <strong>rendering</strong> it.</div>
+  <div>Sooner than later, the HTML file will tell the browser to <em>request an additional resource</em> for the page, and all of this starts again.</div>
+  <div>2. Hassan enjoys his news feed!</div>
+  <div><strong>You may be asking:</strong> "What about Hassan's specific content? His <em>facebook.com</em> and my <em>facebook.com</em> do not look the same."</div>
+  <div>Depending on the application, there are <strong>two</strong> places where the specific content can be added:<ul><li>the client</li><li>the server</li></div>
+  <div>(That's kind of out of scope of this workshop, though.)</div>
+  <div><strong>Part IV: Overview and tools</strong></div>
+  <div>The <em>best</em> tool for understanding requests and responses? <em>Your browser.</em></div>
+  <div data-background-image='../img/devconsole.png'><notes>switch over to console and inspect things</notes></div>
+  <div>Review:<ul><li>browser finds the domain's IP address and constructs a request</li><li>computer sends that request via the internet to that IP</li><li>server receives that request and finds the requested resource</li><li>server sends a response to the client along with the resource</li><li>client parses and displays the resource</li></ul></div>
+  <div>This is a super cursory overview, but you are a <em>champion</em>!</div>
+  <div data-background-image='../img/cactus.jpg'></div>
+  <div>Tweet me <a href='https://twitter.com/lyzidiamond'>@lyzidiamond</a>, email me <strong>lyzidiamond@gmail.com</strong>, find these slides at <a href='http://lyzidiamond.com/sdx-2017/part-1'>lyzidiamond.com/sdx-2017/part-1</a>.<br><br>Stay for <em>Part 2: The Help Scout API</em>!</div>
+  <div>Special thanks to <a href='https://twitter.com/tmcw'>@tmcw</a>, <a href='https://twitter.com/scothis'>@scothis</a>, <a href='https://github.com/alex/what-happens-when'>what-happens-when by @alex</a>, <a href='https://developer.mozilla.org/en-US/docs/Learn/Common_questions/How_does_the_Internet_work'>Mozilla Developer Network</a>, and many others!</div>
+  <div data-background-image='https://image.shutterstock.com/z/stock-photo-funny-and-crazy-man-using-a-computer-on-gray-background-human-hands-hug-monitor-concept-of-love-283174037.jpg'></div>
+
+
+
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-47757349-1', 'lyzidiamond.com');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>
